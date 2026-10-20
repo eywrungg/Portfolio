@@ -153,7 +153,7 @@ const HOVER_ITEMS = [
   },
 ] as const
 
-const PANEL_HEIGHTS = [112, 146, 112] as const
+const PANEL_HEIGHTS = [128, 150, 128] as const
 const PANEL_LAYOUTS = [
   { left: '0%', width: '35%' },
   { left: '31%', width: '39%' },
@@ -188,23 +188,36 @@ function HoverCarousel({ onHover }: { onHover: (k: number | null) => void }) {
           pointerEvents: 'none',
         }}
       >
-        <span
-          style={{
-            opacity: hovered ? 0 : 1,
-            transition: 'opacity 0.25s ease',
-            fontSize: 10,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--ink-4)',
-            fontFamily: 'monospace',
-          }}
-        >
-          Hover to read more
-        </span>
+            <span
+              className="deck-hover-hint"
+              style={{
+                opacity: hovered ? 0 : 1,
+                transition: 'opacity 0.25s ease',
+                fontSize: 10,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: 'var(--ink-4)',
+                fontFamily: 'monospace',
+              }}
+            >
+              Hover to read more
+            </span>
+            <span
+              className="deck-tap-hint"
+              style={{
+                fontSize: 10,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: 'var(--ink-4)',
+                fontFamily: 'monospace',
+              }}
+            >
+              Tap a card to read more
+            </span>
       </div>
 
       <div
-        className="relative mt-3 h-[124px] overflow-hidden rounded-[18px] sm:mt-[14px] sm:h-[138px]"
+          className="about-hover-deck relative mt-3 h-[174px] overflow-hidden rounded-[18px] sm:mt-[14px] sm:h-[176px]"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => {
           setHovered(false)
@@ -216,7 +229,7 @@ function HoverCarousel({ onHover }: { onHover: (k: number | null) => void }) {
           const isActive = active === i
           const height = PANEL_HEIGHTS[i]
           const layout = PANEL_LAYOUTS[i]
-          const translateY = isActive ? 0 : 42
+          const translateY = isActive ? 0 : 12
           const rotation = isActive ? PANEL_ROTATIONS[i] : 0
           const zIndex = isActive ? 4 : active === null ? i + 1 : 1
           const textAlign = PANEL_TEXT_ALIGN[i]
@@ -224,6 +237,11 @@ function HoverCarousel({ onHover }: { onHover: (k: number | null) => void }) {
           return (
             <div
               key={item.title}
+              data-active={isActive}
+              role="button"
+              tabIndex={0}
+              aria-expanded={isActive}
+              aria-label={`${item.title}: ${item.text}`}
               onMouseEnter={() => {
                 setActive(i)
                 onHover(item.key)
@@ -233,10 +251,17 @@ function HoverCarousel({ onHover }: { onHover: (k: number | null) => void }) {
                 onHover(null)
               }}
               onClick={() => setActive(active === i ? null : i)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setActive(active === i ? null : i)
+                }
+              }}
+              className="about-hover-panel"
               style={{
                 position: 'absolute',
                 left: layout.left,
-                bottom: -14,
+                bottom: -2,
                 width: layout.width,
                 height,
                 padding: '16px 18px 14px',
@@ -248,10 +273,12 @@ function HoverCarousel({ onHover }: { onHover: (k: number | null) => void }) {
                   : '0 10px 24px rgba(0,0,0,0.2)',
                 overflow: 'hidden',
                 transform: `translateY(${translateY}px) rotate(${rotation}deg)`,
-                transition: 'transform 0.38s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+                transition:
+                  'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), width 420ms cubic-bezier(0.22, 1, 0.36, 1), height 420ms cubic-bezier(0.22, 1, 0.36, 1), bottom 420ms cubic-bezier(0.22, 1, 0.36, 1), padding 420ms cubic-bezier(0.22, 1, 0.36, 1), border-color 240ms ease, box-shadow 300ms ease',
                 transformOrigin:
                   i === 0 ? 'bottom left' : i === 2 ? 'bottom right' : 'bottom center',
-                cursor: 'default',
+                cursor: 'pointer',
+                willChange: 'transform, width, height',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
@@ -379,7 +406,7 @@ export default function About() {
               Charles
             </span>
             <span
-              className="block"
+              className="block text-[0.9em] tracking-[-0.02em] sm:text-[1em] sm:tracking-normal"
               style={{
                 fontFamily: '"Archivo Black", "Space Grotesk", sans-serif',
                 fontWeight: 900,
@@ -521,7 +548,7 @@ export default function About() {
           <p className="mb-3 mt-3 text-[0.82rem] leading-[1.45] sm:mt-auto sm:text-[0.92rem]" style={{ color: 'var(--ink-2)' }}>
             Harmonics Club member maintaining Dean's Lister honors.
           </p>
-          <Button href="#contact" variant="outline" className="h-8 self-start px-4 text-xs sm:h-7 sm:px-3 sm:text-[11px]">
+          <Button href="#contact" variant="outline" className="h-8 self-center px-4 text-xs sm:h-7 sm:self-start sm:px-3 sm:text-[11px]">
             Invite me to collaborate <ArrowRight size={12} />
           </Button>
         </Card>

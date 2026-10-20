@@ -30,9 +30,9 @@ export type GuestbookUser = {
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 const sessionKey = 'portfolio_guestbook_session'
+const oauthStateKey = 'portfolio_guestbook_oauth_state'
 const anonymousNameKey = 'portfolio_guestbook_anonymous_name'
 export const guestbookMessageMaxLength = 500
 
@@ -106,25 +106,35 @@ async function readSupabaseError(response: Response, fallback: string) {
 }
 
 function readStoredSession() {
-  const raw = window.localStorage.getItem(sessionKey)
+  const raw = window.sessionStorage.getItem(sessionKey)
   if (!raw) return null
 
   try {
     const session = JSON.parse(raw) as GuestbookSession
     if (session.expires_at && session.expires_at < Date.now()) {
-      window.localStorage.removeItem(sessionKey)
+      window.sessionStorage.removeItem(sessionKey)
       return null
     }
 
     return session.access_token ? session : null
   } catch {
-    window.localStorage.removeItem(sessionKey)
+    window.sessionStorage.removeItem(sessionKey)
     return null
   }
 }
 
 function writeSession(session: GuestbookSession) {
-  window.localStorage.setItem(sessionKey, JSON.stringify(session))
+  window.sessionStorage.setItem(sessionKey, JSON.stringify(session))
+}
+
+function randomState() {
+  const bytes = new Uint8Array(32)
+  window.crypto.getRandomValues(bytes)
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+function clearAuthCallback() {
+  window.history.replaceState(null, document.title, window.location.pathname)
 }
 
 export function captureGuestbookSessionFromUrl() {
@@ -134,9 +144,26 @@ export function captureGuestbookSessionFromUrl() {
     ? window.location.hash.slice(1)
     : window.location.hash
   const params = new URLSearchParams(hash)
+  const authError = params.get('error')
+
+  if (authError) {
+    window.sessionStorage.removeItem(oauthStateKey)
+    clearAuthCallback()
+    throw new Error('GitHub sign-in was cancelled or could not be completed.')
+  }
+
   const accessToken = params.get('access_token')
 
   if (!accessToken) return readStoredSession()
+
+  const expectedState = window.sessionStorage.getItem(oauthStateKey)
+  const returnedState = params.get('state')
+  window.sessionStorage.removeItem(oauthStateKey)
+
+  if (!expectedState || !returnedState || returnedState !== expectedState) {
+    clearAuthCallback()
+    throw new Error('Sign-in verification failed. Please try again.')
+  }
 
   const expiresIn = Number(params.get('expires_in') ?? 3600)
   const session: GuestbookSession = {
@@ -146,7 +173,7 @@ export function captureGuestbookSessionFromUrl() {
   }
 
   writeSession(session)
-  window.history.replaceState(null, document.title, window.location.pathname)
+  clearAuthCallback()
   return session
 }
 
@@ -156,7 +183,7 @@ export function getGuestbookSession() {
 }
 
 export function signOutGuestbook() {
-  window.localStorage.removeItem(sessionKey)
+  window.sessionStorage.removeItem(sessionKey)
 }
 
 export function signInWithGuestbookProvider(provider: AuthProvider) {
@@ -165,10 +192,13 @@ export function signInWithGuestbookProvider(provider: AuthProvider) {
   }
 
   const redirectTo = `${window.location.origin}${withBase('/guestbook')}`
+  const state = randomState()
+  window.sessionStorage.setItem(oauthStateKey, state)
   const authUrl = new URL(`${supabaseUrl}/auth/v1/authorize`)
   authUrl.searchParams.set('provider', provider)
   authUrl.searchParams.set('redirect_to', redirectTo)
   authUrl.searchParams.set('response_type', 'token')
+  authUrl.searchParams.set('state', state)
   window.location.href = authUrl.toString()
 }
 
@@ -235,8 +265,7 @@ export async function getGuestbookUser(session: GuestbookSession) {
 export async function listGuestbookEntries() {
   if (!guestbookConfigured || !supabaseUrl) return [] as GuestbookEntry[]
 
-  const fullSelect =
-    'id,user_id,name,username,avatar_url,provider,message,role,created_at'
+  const fullSelect = 'id,name,username,avatar_url,provider,message,role,created_at'
   const response = await fetch(
     `${supabaseUrl}/rest/v1/guestbook_entries?select=${fullSelect}&order=created_at.desc&limit=50`,
     { headers: getPublicHeaders() },
@@ -307,10 +336,9 @@ export async function createAnonymousGuestbookEntry(input: {
       Prefer: 'return=representation',
     },
     body: JSON.stringify({
-      user_id: null,
-      name: input.name,
-      username: null,
-      avatar_url: null,
+      // Keep this payload aligned with the anonymous column grant in the
+      // migration. The browser is never trusted to set identity fields.
+      name: cleanText(input.name, 80),
       provider: 'anonymous',
       role: 'anonymous',
       message: cleanText(input.message, guestbookMessageMaxLength),

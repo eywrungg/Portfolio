@@ -66,7 +66,14 @@ export default function GuestbookPage() {
     setAnonymousName(getAnonymousGuestbookName())
 
     const load = async () => {
-      const captured = captureGuestbookSessionFromUrl()
+      let captured: GuestbookSession | null = null
+      try {
+        captured = captureGuestbookSessionFromUrl()
+      } catch (err) {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : 'Unable to complete sign-in')
+        }
+      }
       if (mounted) setSession(captured)
 
       if (captured) {

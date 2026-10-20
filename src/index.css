@@ -22,6 +22,19 @@
   --app-bg:      none;
   --app-bg-size: auto;
   --app-bg-position: center top, center top;
+  --project-frame: linear-gradient(180deg, #1c1c1c, #080808);
+  --project-frame-border: rgba(255,255,255,0.18);
+  --project-frame-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 16px 42px rgba(0,0,0,0.34);
+  --project-panel: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+  --project-panel-border: rgba(255,255,255,0.16);
+  --project-copy: #f7f7f7;
+  --project-action-bg: rgba(255,255,255,0.06);
+  --project-action-border: rgba(255,255,255,0.72);
+  --project-action-ink: #f7f7f7;
+  --project-image-bg: #080808;
+  --project-image-border: rgba(255,255,255,0.18);
+  --project-image-inset: rgba(255,255,255,0.05);
+  --project-image-overlay: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 42%, rgba(255,255,255,0.08) 100%);
 }
 
 /* ── Light theme ──────────────────────────────────────── */
@@ -42,6 +55,19 @@
   --app-bg:      none;
   --app-bg-size: auto;
   --app-bg-position: center top;
+  --project-frame: linear-gradient(180deg, #e4dfd7, #d6d0c7);
+  --project-frame-border: rgba(56,48,39,0.18);
+  --project-frame-shadow: 0 0 0 1px rgba(56,48,39,0.07), 0 16px 42px rgba(56,48,39,0.14);
+  --project-panel: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.48));
+  --project-panel-border: rgba(56,48,39,0.15);
+  --project-copy: #0f0f0f;
+  --project-action-bg: rgba(255,255,255,0.58);
+  --project-action-border: rgba(56,48,39,0.42);
+  --project-action-ink: #0f0f0f;
+  --project-image-bg: #f5f2ee;
+  --project-image-border: rgba(56,48,39,0.18);
+  --project-image-inset: rgba(56,48,39,0.05);
+  --project-image-overlay: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, transparent 42%, rgba(56,48,39,0.06) 100%);
 }
 
 @layer base {
@@ -273,5 +299,64 @@
   .interactive-bg > * {
     position: relative;
     z-index: 1;
+  }
+
+  .deck-tap-hint {
+    display: none;
+  }
+
+  @keyframes deck-copy-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .about-hover-panel[data-active='true'] > p,
+  .creative-skill-panel[data-active='true'] > p {
+    animation: deck-copy-reveal 260ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+  }
+
+  @media (max-width: 639px) {
+    .deck-hover-hint {
+      display: none;
+    }
+
+    .deck-tap-hint {
+      display: inline;
+    }
+
+    .about-hover-deck,
+    .creative-skill-deck {
+      height: 174px !important;
+    }
+
+    .about-hover-panel[data-active='true'],
+    .creative-skill-panel[data-active='true'] {
+      bottom: 8px !important;
+      left: 4% !important;
+      width: 92% !important;
+      height: 154px !important;
+      padding: 14px 16px !important;
+      text-align: left !important;
+      transform: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-hover-panel,
+    .creative-skill-panel {
+      transition: none !important;
+    }
+
+    .about-hover-panel[data-active='true'] > p,
+    .creative-skill-panel[data-active='true'] > p {
+      animation: none;
+    }
   }
 }

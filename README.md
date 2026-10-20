@@ -64,6 +64,13 @@ npm run build
 
 GitHub Pages deployment is handled by GitHub Actions. The workflow builds the app with the `/probable-waffle/` base path and publishes the generated `dist` folder.
 
+## Supabase security
+
+- Keep `.env.local` private; it is ignored by Git. Copy `.env.example` to create a local configuration.
+- Only `VITE_SUPABASE_PUBLISHABLE_KEY` belongs in this frontend. Never add a Supabase secret or legacy `service_role` key to a `VITE_` variable.
+- Apply every migration in `supabase/migrations` before enabling the guestbook. They enable RLS and restrict the guestbook to public reads and validated inserts only.
+- In the Supabase Dashboard, add your production and local URLs under **Authentication → URL Configuration**, enable CAPTCHA for Auth, set conservative Auth rate limits, and resolve any Security Advisor findings before launch.
+
 ## Author
 
 Charles Arone Alcebar

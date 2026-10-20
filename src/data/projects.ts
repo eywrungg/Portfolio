@@ -99,6 +99,7 @@ const archiveOnlyProjects: Project[] = [
     chips: ['HTML', 'Frontend', 'UI Polish', 'Forked Project'],
     accent: '#fb7185',
     image: '/Projects/Frontend Enhancement Project.png',
+    href: 'https://frontend-enhancement-project.vercel.app/',
     category: 'Development Projects',
   },
   {

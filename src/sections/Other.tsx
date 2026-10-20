@@ -24,7 +24,7 @@ function Card({
       className={`rounded-[1.8rem] border ${className}`}
       style={{
         background: 'var(--card)',
-        borderColor: 'rgba(255,255,255,0.07)',
+        borderColor: 'var(--border)',
         boxShadow: 'var(--card-shadow)',
         ...style,
       }}
@@ -52,7 +52,7 @@ const creativeSkills = [
   },
 ] as const
 
-const panelHeights = [112, 146, 112] as const
+const panelHeights = [128, 150, 128] as const
 const panelLayouts = [
   { left: '0%', width: '35%' },
   { left: '31%', width: '39%' },
@@ -67,11 +67,11 @@ function CreativeStack() {
 
   return (
     <div
-      className="relative mt-5 overflow-hidden rounded-[1.45rem]"
+      className="creative-skill-deck relative mt-5 h-44 overflow-hidden rounded-[1.45rem]"
       style={{
-        height: 160,
+        height: 176,
         background:
-          'radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 38%), linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+          'radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 38%), linear-gradient(180deg, color-mix(in srgb, var(--ink) 3%, transparent), color-mix(in srgb, var(--ink) 1%, transparent))',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
@@ -84,17 +84,23 @@ function CreativeStack() {
         className="pointer-events-none absolute left-0 right-0 top-0 z-10 flex justify-center pt-3"
       >
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em] transition-opacity duration-200"
+          className="deck-hover-hint font-mono text-[10px] uppercase tracking-[0.16em] transition-opacity duration-200"
           style={{ color: 'var(--ink-4)', opacity: hovered ? 0 : 1 }}
         >
           Hover to read more
+        </span>
+        <span
+          className="deck-tap-hint font-mono text-[10px] uppercase tracking-[0.16em]"
+          style={{ color: 'var(--ink-4)' }}
+        >
+          Tap a card to read more
         </span>
       </div>
 
       {creativeSkills.map((skill, index) => {
         const isActive = active === index
         const layout = panelLayouts[index]
-        const translateY = isActive ? 0 : 42
+        const translateY = isActive ? 0 : 12
         const rotation = isActive ? panelRotations[index] : 0
         const zIndex = isActive ? 4 : active === null ? index + 1 : 1
         const textAlign = panelTextAlign[index]
@@ -105,29 +111,42 @@ function CreativeStack() {
             onMouseEnter={() => setActive(index)}
             onFocus={() => setActive(index)}
             onClick={() => setActive(active === index ? null : index)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                setActive(active === index ? null : index)
+              }
+            }}
+            data-active={isActive}
+            role="button"
+            aria-expanded={isActive}
+            aria-label={`${skill.label}: ${skill.description}`}
             tabIndex={0}
-            className="absolute bottom-[-14px] outline-none"
+            className="creative-skill-panel absolute outline-none"
             style={{
               left: layout.left,
               width: layout.width,
               height: panelHeights[index],
+              bottom: -2,
               padding: '16px 18px 14px',
               background: 'var(--surface)',
               borderRadius: 18,
               border: `1px solid ${
                 isActive
                   ? 'color-mix(in srgb, var(--accent) 38%, var(--border))'
-                  : 'rgba(255,255,255,0.08)'
+                  : 'var(--border)'
               }`,
               boxShadow: isActive
                 ? '0 18px 40px rgba(0,0,0,0.34), 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 12%, transparent)'
                 : '0 10px 24px rgba(0,0,0,0.2)',
               overflow: 'hidden',
               transform: `translateY(${translateY}px) rotate(${rotation}deg)`,
-              transition: 'transform 0.38s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+              transition:
+                'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), width 420ms cubic-bezier(0.22, 1, 0.36, 1), height 420ms cubic-bezier(0.22, 1, 0.36, 1), bottom 420ms cubic-bezier(0.22, 1, 0.36, 1), padding 420ms cubic-bezier(0.22, 1, 0.36, 1), border-color 240ms ease, box-shadow 300ms ease',
               transformOrigin:
                 index === 0 ? 'bottom left' : index === 2 ? 'bottom right' : 'bottom center',
-              cursor: 'default',
+              cursor: 'pointer',
+              willChange: 'transform, width, height',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
@@ -232,14 +251,14 @@ function SocialTile({
       className="flex items-center justify-between rounded-[1.15rem] border px-4 py-4 transition-[transform,border-color,background-color] duration-300"
       style={{
         background: 'var(--surface)',
-        borderColor: 'rgba(255,255,255,0.06)',
+        borderColor: 'var(--border)',
         color: 'var(--ink)',
       }}
     >
       <span className="inline-flex items-center gap-3">
         <span
           className="flex h-10 w-10 items-center justify-center rounded-full"
-          style={{ background: 'rgba(255,255,255,0.04)' }}
+          style={{ background: 'var(--accent-dim)' }}
         >
           <Icon size={16} />
         </span>
@@ -276,7 +295,7 @@ function SocialTile({
 
 export default function Other() {
   return (
-    <Section id="other" className="mx-auto max-w-5xl px-6 py-28">
+    <Section id="other" className="mx-auto max-w-5xl px-5 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
           className="text-3xl font-semibold tracking-tight sm:text-4xl"
@@ -415,11 +434,11 @@ export default function Other() {
 
             <a
               href={withBase('/blog')}
-              className="group/blog flex shrink-0 items-center justify-between gap-6 rounded-[1.1rem] border px-4 py-3 font-semibold transition-transform duration-300 hover:-translate-y-0.5"
+              className="group/blog flex w-full items-center justify-between gap-6 rounded-[1.1rem] border px-4 py-3 font-semibold transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto sm:shrink-0"
               style={{
-                background: '#050505',
-                borderColor: 'rgba(255,255,255,0.08)',
-                color: '#f7f7f7',
+                background: 'var(--surface)',
+                borderColor: 'var(--border)',
+                color: 'var(--ink)',
                 boxShadow: '0 16px 36px rgba(0,0,0,0.26)',
               }}
             >

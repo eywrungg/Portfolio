@@ -16,18 +16,17 @@ function ImageHolder({
 }) {
   return (
     <div
-      className="relative aspect-[1.36/1] overflow-hidden rounded-[1.5rem] border bg-[#121212] sm:aspect-[1.52/1] sm:rounded-[2rem]"
+      className="relative aspect-[1.36/1] overflow-hidden rounded-[1.5rem] border sm:aspect-[1.52/1] sm:rounded-[2rem]"
       style={{
-        background: '#080808',
-        borderColor: 'rgba(255,255,255,0.18)',
-        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05)',
+        background: 'var(--project-image-bg)',
+        borderColor: 'var(--project-image-border)',
+        boxShadow: 'inset 0 0 0 1px var(--project-image-inset)',
       }}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-100"
         style={{
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 42%, rgba(255,255,255,0.08) 100%)',
+          background: 'var(--project-image-overlay)',
         }}
       />
       <img src={image} alt={`${title} preview`} className="h-full w-full object-cover object-top" />
@@ -278,20 +277,23 @@ function ProjectCard({
       <div
         className="rounded-[1.8rem] border p-2.5 sm:rounded-[2.15rem] sm:p-4"
         style={{
-          background: 'linear-gradient(180deg, #1c1c1c, #080808)',
-          borderColor: 'rgba(255,255,255,0.18)',
-          boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 16px 42px rgba(0,0,0,0.34)',
+          background: 'var(--project-frame)',
+          borderColor: 'var(--project-frame-border)',
+          boxShadow: 'var(--project-frame-shadow)',
         }}
       >
         <div
           className="flex min-h-0 flex-col rounded-[1.55rem] border px-4 pb-4 pt-4 sm:min-h-[31rem] sm:rounded-[1.85rem] sm:px-7 sm:pb-7 sm:pt-7"
           style={{
-            background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025))',
-            borderColor: 'rgba(255,255,255,0.16)',
+            background: 'var(--project-panel)',
+            borderColor: 'var(--project-panel-border)',
           }}
         >
           <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-start sm:justify-between">
-            <p className="max-w-none text-[0.98rem] font-medium leading-[1.6] text-white sm:max-w-[24ch] sm:text-[1.12rem]">
+            <p
+              className="max-w-none text-[0.98rem] font-medium leading-[1.6] sm:max-w-[24ch] sm:text-[1.12rem]"
+              style={{ color: 'var(--project-copy)' }}
+            >
               {item.description}
             </p>
             <button
@@ -299,9 +301,9 @@ function ProjectCard({
               onClick={() => onReadMore(item)}
               className="inline-flex shrink-0 self-start items-center gap-1.5 rounded-full border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors hover:border-white"
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                borderColor: 'rgba(255,255,255,0.72)',
-                color: '#f7f7f7',
+                background: 'var(--project-action-bg)',
+                borderColor: 'var(--project-action-border)',
+                color: 'var(--project-action-ink)',
               }}
             >
               Read More
