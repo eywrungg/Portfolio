@@ -5,7 +5,7 @@ A personal portfolio website for showcasing my development projects, technical s
 Live site:
 
 ```txt
-https://eywrungg.github.io/probable-waffle/
+https://eywrungg.github.io/Portfolio/
 ```
 
 ## Features
@@ -62,7 +62,7 @@ The project can be deployed to Vercel with the normal Vite build command:
 npm run build
 ```
 
-GitHub Pages deployment is handled by GitHub Actions. The workflow builds the app with the `/probable-waffle/` base path and publishes the generated `dist` folder.
+GitHub Pages deployment is handled by GitHub Actions. The workflow builds the app with the `/Portfolio/` base path and publishes the generated `dist` folder.
 
 ## Supabase security
 
