@@ -250,7 +250,7 @@ export default function ProjectsArchive() {
                             <div
                               key={image}
                               className={`${isPortrait ? 'aspect-[9/14]' : 'aspect-[4/3]'} overflow-hidden rounded-[1rem] border`}
-                              style={{ background: '#080808', borderColor: 'color-mix(in srgb, var(--ink) 9%, transparent)' }}
+                              style={{ background: 'var(--surface)', borderColor: 'color-mix(in srgb, var(--ink) 9%, transparent)' }}
                             >
                               <img src={image} alt={`${project.title} preview`} className="h-full w-full object-contain" />
                             </div>
