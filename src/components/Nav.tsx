@@ -117,33 +117,6 @@ export default function Nav() {
                   borderColor: 'color-mix(in srgb, var(--border) 82%, transparent)',
                 }}
               >
-                <button
-                  type="button"
-                  onClick={() => handleLink('#about')}
-                  className="flex h-10 items-center px-2.5 md:hidden"
-                  aria-label="Go to home section"
-                >
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.15em]" style={{ color: 'var(--accent)' }}>
-                    Charles
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleLink('#about')}
-                  className="hidden min-w-[6.7rem] items-center justify-center px-3 text-left lg:flex"
-                  aria-label="Go to home section"
-                >
-                  <span
-                    className="text-[15px] font-semibold uppercase tracking-[0.16em]"
-                    style={{ color: 'var(--accent)' }}
-                  >
-                    Charles
-                  </span>
-                </button>
-
-                <span className="hidden h-7 w-px bg-border/80 lg:block" />
-
                 <ul className="relative hidden items-center gap-1 md:flex">
                   {NAV_LINKS.map((link) => {
                     const isActive = active === link.href.slice(1)
