@@ -3,15 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirecting...</title>
+    <meta name="robots" content="noindex" />
+    <title>Opening portfolio…</title>
     <script>
-      const projectBase = '/Portfolio'
-      const pathname = window.location.pathname.replace(/\/+$/, '')
-      const base = pathname === projectBase || pathname.startsWith(`${projectBase}/`) ? projectBase : ''
-      const route = pathname.startsWith(base) ? pathname.slice(base.length) || '/' : '/'
-      const target = base ? `${base}/` : '/'
-      window.location.replace(`${target}?redirect=${encodeURIComponent(route)}${window.location.hash}`)
+      ;(() => {
+        const repositoryBase = '/Portfolio'
+        const requestedPath = window.location.pathname.startsWith(repositoryBase)
+          ? window.location.pathname.slice(repositoryBase.length) || '/'
+          : '/'
+        const redirectPath = `${requestedPath}${window.location.search}`
+        const destination = `${repositoryBase}/?redirect=${encodeURIComponent(redirectPath)}${window.location.hash}`
+
+        window.location.replace(destination)
+      })()
     </script>
   </head>
-  <body></body>
+  <body>
+    <p>Opening the portfolio…</p>
+  </body>
 </html>
