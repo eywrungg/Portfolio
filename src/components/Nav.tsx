@@ -109,14 +109,42 @@ export default function Nav() {
               className="pointer-events-auto"
             >
               <div
-                className="flex h-12 items-center gap-2 border border-border/60 px-4"
+                className="flex h-[3.85rem] items-center gap-1.5 border px-2.5 sm:px-3"
                 style={{
                   borderRadius: '9999px',
                   background: 'var(--nav-bg)',
-                  boxShadow: 'var(--nav-shadow)',
+                  boxShadow: '0 18px 42px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  borderColor: 'color-mix(in srgb, var(--border) 82%, transparent)',
                 }}
               >
-                <ul className="relative hidden items-center gap-1.5 md:flex">
+                <button
+                  type="button"
+                  onClick={() => handleLink('#about')}
+                  className="flex h-10 items-center px-2.5 md:hidden"
+                  aria-label="Go to home section"
+                >
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.15em]" style={{ color: 'var(--accent)' }}>
+                    Charles
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleLink('#about')}
+                  className="hidden min-w-[6.7rem] items-center justify-center px-3 text-left lg:flex"
+                  aria-label="Go to home section"
+                >
+                  <span
+                    className="text-[15px] font-semibold uppercase tracking-[0.16em]"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    Charles
+                  </span>
+                </button>
+
+                <span className="hidden h-7 w-px bg-border/80 lg:block" />
+
+                <ul className="relative hidden items-center gap-1 md:flex">
                   {NAV_LINKS.map((link) => {
                     const isActive = active === link.href.slice(1)
                     return (
@@ -135,7 +163,7 @@ export default function Nav() {
                         )}
                         <button
                           onClick={() => handleLink(link.href)}
-                          className={`relative z-10 px-5 py-2.5 text-[14px] font-semibold transition-colors duration-200 ${
+                          className={`relative z-10 px-3.5 py-3 text-[14px] font-semibold transition-colors duration-200 lg:px-4 ${
                             isActive ? '' : 'text-ink-2 hover:text-ink'
                           }`}
                           style={{ borderRadius: '9999px', color: isActive ? '#000' : undefined }}
@@ -147,7 +175,7 @@ export default function Nav() {
                   })}
                 </ul>
 
-                <span className="mx-1.5 hidden h-4 w-px bg-border md:block" />
+                <span className="mx-1.5 hidden h-6 w-px bg-border/80 md:block" />
 
                 <button
                   onClick={toggle}
@@ -184,7 +212,12 @@ export default function Nav() {
             <Button
               onClick={() => setContactSheetOpen(true)}
               variant="outline"
-              className="h-11 shrink-0 border-border/60 px-4 text-[13px] shadow-[0_12px_34px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+              className="h-12 shrink-0 px-5 text-[13px] font-semibold shadow-[0_16px_36px_rgba(0,0,0,0.18)] backdrop-blur-xl"
+              style={{
+                background: 'var(--nav-bg)',
+                borderColor: 'var(--border)',
+                color: 'var(--ink)',
+              }}
             >
               <Calendar size={12} />
               Book a Call

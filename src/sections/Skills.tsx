@@ -67,7 +67,7 @@ const creativeTools = [
 ] as const
 
 const experience = [
-  { title: 'Capstone Developer', detail: 'Currently building Campus AR Navigation and Mentra APK', year: '2026', tone: '#c96a3b' },
+  { title: 'Capstone Developer', detail: 'Currently building Gabay AR navigation and Mentra APK', year: '2026', tone: '#c96a3b' },
   { title: 'App Developer', detail: 'Built PyroWatch APK and continuing mobile app work', year: '2026', tone: '#4b7496' },
   { title: 'Arduino IoT Maker', detail: 'Developed PyroWatch IoT hardware and fire safety prototype', year: '2026', tone: '#b88a42' },
   { title: 'Film Poster Designer', detail: 'Created poster designs for film projects', year: '2026', tone: '#8f5f78' },

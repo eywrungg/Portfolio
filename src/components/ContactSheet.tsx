@@ -56,7 +56,7 @@ export default function ContactSheet({
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-end justify-center px-4 pb-0 pt-8 sm:items-center sm:px-6 sm:pb-8"
+          className="fixed inset-0 z-[100] flex items-end justify-center px-4 pb-0 pt-8 sm:items-center sm:px-6 sm:pb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -83,7 +83,7 @@ export default function ContactSheet({
             style={{
               background:
                 'linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, white 8%), var(--card))',
-              borderColor: 'rgba(255,255,255,0.08)',
+              borderColor: 'var(--border)',
               boxShadow:
                 '0 28px 80px rgba(0,0,0,0.46), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.03)',
             }}
@@ -130,7 +130,7 @@ export default function ContactSheet({
               <a
                 href={`mailto:${EMAIL}?subject=Book%20a%20Call&body=Hi%20Charles%2C%20I%27d%20like%20to%20book%20a%20call.`}
                 className="rounded-[1.6rem] border px-6 py-6 transition-colors"
-                style={{ background: 'var(--surface)', borderColor: 'rgba(255,255,255,0.06)' }}
+                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
               >
                 <Calendar size={22} style={{ color: 'var(--accent)' }} />
                 <div className="mt-10">
@@ -146,7 +146,7 @@ export default function ContactSheet({
               <a
                 href={`mailto:${EMAIL}`}
                 className="rounded-[1.6rem] border px-6 py-6 transition-colors"
-                style={{ background: 'var(--surface)', borderColor: 'rgba(255,255,255,0.06)' }}
+                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
               >
                 <Mail size={22} style={{ color: 'var(--accent)' }} />
                 <div className="mt-10">
@@ -160,7 +160,7 @@ export default function ContactSheet({
               </a>
             </div>
 
-            <div className="mt-6 border-t pt-5" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            <div className="mt-6 border-t pt-5" style={{ borderColor: 'var(--border)' }}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   type="button"

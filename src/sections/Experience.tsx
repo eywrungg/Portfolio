@@ -8,7 +8,7 @@ const timeline = [
   {
     year: '2026 - Present',
     role: 'Capstone Developer',
-    org: 'Campus AR Navigation + Mentra APK in progress',
+    org: 'Gabay AR navigation + Mentra APK in progress',
     badge: 'Current',
     tone: '#c96a3b',
     badgeStyle: {

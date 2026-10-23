@@ -185,10 +185,10 @@ const archiveOnlyProjects: Project[] = [
     label: 'Android AR App',
     title: 'Gabay',
     description:
-      'An Android AR navigation app designed to guide people through real-world locations with camera-based direction cues.',
+      'An Android AR campus navigation app designed to help students find rooms and campus locations with camera-based direction cues.',
     highlights: [
       'Built as an installable Android APK for an on-device AR experience.',
-      'Uses ARCore-compatible hardware to place guidance in the surrounding environment.',
+      'Uses ARCore-compatible hardware to place wayfinding guidance in the surrounding environment.',
       'Includes a device compatibility guide before visitors download the app.',
     ],
     chips: ['Android APK', 'Unity', 'ARCore', 'AR Navigation'],
@@ -218,23 +218,6 @@ const archiveOnlyProjects: Project[] = [
   },
   {
     index: '11',
-    label: 'Current Project',
-    title: 'Campus AR Navigation',
-    description:
-      'A currently in-progress campus navigation project using AR technology in Unity to help students find rooms and campus locations.',
-    highlights: [
-      'Built around Unity-based AR navigation for campus wayfinding.',
-      'Focuses on guiding users through campus spaces with visual direction cues.',
-      'Currently being developed as an active project connected to my IT and AR learning path.',
-    ],
-    chips: ['Unity', 'AR Technology', 'Campus Navigation', 'Current Project'],
-    accent: '#38bdf8',
-    image: '/Projects/campus-ar-navigation.svg',
-    category: 'App & AR Projects',
-    orientation: 'portrait',
-  },
-  {
-    index: '12',
     label: 'UI Design',
     title: 'First-Year UI Design Set',
     description:
@@ -251,7 +234,7 @@ const archiveOnlyProjects: Project[] = [
     gallery: ['/Projects/dashdashboard.jpg', '/Projects/login-in-form.jpg', '/Projects/sign-up.jpg'],
   },
   {
-    index: '13',
+    index: '12',
     label: 'Poster Design',
     title: 'Third-Year Photoshop Posters',
     description:

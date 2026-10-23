@@ -13,7 +13,7 @@ const projectGroups = [
   },
   {
     title: 'App & AR Projects',
-    description: 'Mobile APK work, Unity campus navigation, and AR-focused builds.',
+    description: 'Mobile APK work and AR-focused builds.',
   },
   {
     title: 'Creative Works',
@@ -301,7 +301,7 @@ export default function ProjectsArchive() {
                           className="mt-5 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.14em]"
                           style={{ color: project.accent }}
                         >
-                          Download & compatibility <Download size={13} />
+                          Get Gabay APK <Download size={13} />
                         </button>
                       ) : project.href ? (
                         <a
