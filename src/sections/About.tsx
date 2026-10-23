@@ -142,13 +142,13 @@ const HOVER_ITEMS = [
     key: 1,
   },
   {
-    title: 'University',
-    text: "BS Information Technology student at St. Mary's College of Bansalan, Davao del Sur - bridging software and hardware.",
+    title: 'College',
+    text: "BS Information Technology student at St. Mary's College of Bansalan, a private college in Davao del Sur, building across software and hardware.",
     key: 2,
   },
   {
-    title: 'Competitions',
-    text: "Currently maintaining Dean's Lister standing and academic honors while balancing research, systems, and creative work.",
+    title: 'Academic Honors',
+    text: "Dean's Lister recognized for academic consistency while balancing research, systems, and creative work.",
     key: 3,
   },
 ] as const

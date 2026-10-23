@@ -64,6 +64,12 @@ npm run build
 
 GitHub Pages deployment is handled by GitHub Actions. The workflow builds the app with the `/Portfolio/` base path and publishes the generated `dist` folder.
 
+### Gabay APK download
+
+Do not commit the Gabay APK to this repository or include it in the GitHub Pages build. The Gabay project modal links to the shared Google Drive APK instead, keeping the 565 MB binary out of Git and the Pages deployment.
+
+For a later version, upload the replacement APK to Google Drive and update Gabay's `download.href` in `src/data/projects.ts` with its new direct-download URL.
+
 ## Supabase security
 
 - Keep `.env.local` private; it is ignored by Git. Copy `.env.example` to create a local configuration.

@@ -1,0 +1,43 @@
+<svg width="900" height="1400" viewBox="0 0 900 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="85" y1="55" x2="820" y2="1360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#092C43"/>
+      <stop offset="0.52" stop-color="#075A78"/>
+      <stop offset="1" stop-color="#042C42"/>
+    </linearGradient>
+    <linearGradient id="route" x1="250" y1="1110" x2="690" y2="290" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBBF24"/>
+      <stop offset="1" stop-color="#FDE68A"/>
+    </linearGradient>
+    <filter id="glow" x="85" y="140" width="730" height="1000" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="19"/>
+    </filter>
+  </defs>
+  <rect width="900" height="1400" rx="68" fill="url(#bg)"/>
+  <g opacity="0.16" stroke="#D5F5FF" stroke-width="2">
+    <path d="M80 250H820M80 400H820M80 550H820M80 700H820M80 850H820M80 1000H820M80 1150H820"/>
+    <path d="M150 130V1270M300 130V1270M450 130V1270M600 130V1270M750 130V1270"/>
+  </g>
+  <circle cx="450" cy="650" r="235" fill="#63DDF5" opacity="0.2" filter="url(#glow)"/>
+  <rect x="104" y="98" width="692" height="1204" rx="70" fill="#061C2B" stroke="#9FEAFF" stroke-opacity="0.7" stroke-width="4"/>
+  <rect x="130" y="150" width="640" height="1072" rx="48" fill="#073A55" stroke="#5ED8F3" stroke-opacity="0.32" stroke-width="3"/>
+  <rect x="360" y="121" width="180" height="14" rx="7" fill="#74E6FA" opacity="0.8"/>
+  <text x="190" y="267" fill="#E6FBFF" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" letter-spacing="10">GABAY</text>
+  <text x="190" y="310" fill="#91DDEC" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="4">AR NAVIGATION</text>
+  <path d="M245 1020C264 855 319 820 373 730C428 638 369 576 438 490C491 424 559 417 613 349" stroke="#051720" stroke-opacity="0.6" stroke-width="48" stroke-linecap="round"/>
+  <path d="M245 1020C264 855 319 820 373 730C428 638 369 576 438 490C491 424 559 417 613 349" stroke="url(#route)" stroke-width="19" stroke-linecap="round"/>
+  <circle cx="245" cy="1020" r="39" fill="#FBBF24" stroke="#FFF5C2" stroke-width="10"/>
+  <circle cx="613" cy="349" r="42" fill="#FEFBEC" stroke="#FBBF24" stroke-width="14"/>
+  <path d="M613 317L635 359L591 359L613 317Z" fill="#075A78"/>
+  <g fill="#B8F2FF">
+    <rect x="194" y="460" width="112" height="147" rx="16" opacity="0.7"/>
+    <rect x="575" y="692" width="126" height="191" rx="16" opacity="0.55"/>
+    <rect x="200" y="780" width="94" height="120" rx="16" opacity="0.5"/>
+  </g>
+  <g stroke="#074257" stroke-width="9" opacity="0.85">
+    <path d="M220 500H280M220 535H280M220 570H280M600 735H675M600 775H675M600 815H675M220 818H274M220 852H274"/>
+  </g>
+  <rect x="190" y="1094" width="520" height="72" rx="36" fill="#0B6E8C" stroke="#7EE7FA" stroke-opacity="0.8" stroke-width="2"/>
+  <text x="450" y="1139" text-anchor="middle" fill="#E9FDFF" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="2">FIND YOUR WAY</text>
+  <text x="450" y="1280" text-anchor="middle" fill="#8DDFF0" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="3">POWERED BY ARCORE</text>
+</svg>

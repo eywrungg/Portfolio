@@ -13,6 +13,16 @@ export type Project = {
   category?: 'Development Projects' | 'App & AR Projects' | 'Creative Works'
   orientation?: 'landscape' | 'portrait'
   gallery?: string[]
+  download?: {
+    href: string
+    fileName: string
+    label: string
+  }
+  arcore?: {
+    requirements: string[]
+    sampleDevices: string[]
+    officialDevicesUrl: string
+  }
 }
 
 export const featuredProjects: Project[] = [
@@ -172,6 +182,42 @@ const archiveOnlyProjects: Project[] = [
   },
   {
     index: '10',
+    label: 'Android AR App',
+    title: 'Gabay',
+    description:
+      'An Android AR navigation app designed to guide people through real-world locations with camera-based direction cues.',
+    highlights: [
+      'Built as an installable Android APK for an on-device AR experience.',
+      'Uses ARCore-compatible hardware to place guidance in the surrounding environment.',
+      'Includes a device compatibility guide before visitors download the app.',
+    ],
+    chips: ['Android APK', 'Unity', 'ARCore', 'AR Navigation'],
+    accent: '#7dd3fc',
+    image: '/Projects/Gabay.svg',
+    category: 'App & AR Projects',
+    orientation: 'portrait',
+    download: {
+      href: 'https://drive.usercontent.google.com/download?id=1v2fJgMIqQwn9gOnXzRm-JC9g4YqgHRTM&export=download&confirm=t',
+      fileName: 'Gabay.apk',
+      label: 'Download Gabay APK',
+    },
+    arcore: {
+      requirements: [
+        'Android 7.0 (Nougat) or newer.',
+        'An ARCore-certified Android device with a working rear camera.',
+        'Google Play Services for AR installed and kept up to date.',
+      ],
+      sampleDevices: [
+        'Google Pixel 4, 5, 6, 7, 8, and newer Pixel devices',
+        'Samsung Galaxy S21, S22, S23, and S24 series',
+        'Samsung Galaxy A52, A53 5G, A54 5G, and A55 5G',
+        'Samsung Galaxy Z Flip3 / Fold3 and newer compatible models',
+      ],
+      officialDevicesUrl: 'https://developers.google.com/ar/devices',
+    },
+  },
+  {
+    index: '11',
     label: 'Current Project',
     title: 'Campus AR Navigation',
     description:
@@ -188,7 +234,7 @@ const archiveOnlyProjects: Project[] = [
     orientation: 'portrait',
   },
   {
-    index: '11',
+    index: '12',
     label: 'UI Design',
     title: 'First-Year UI Design Set',
     description:
@@ -205,7 +251,7 @@ const archiveOnlyProjects: Project[] = [
     gallery: ['/Projects/dashdashboard.jpg', '/Projects/login-in-form.jpg', '/Projects/sign-up.jpg'],
   },
   {
-    index: '12',
+    index: '13',
     label: 'Poster Design',
     title: 'Third-Year Photoshop Posters',
     description:
@@ -229,6 +275,12 @@ function withProjectAssets(project: Project): Project {
     ...project,
     image: withBase(project.image),
     gallery: project.gallery?.map((image) => withBase(image)),
+    download: project.download
+      ? {
+          ...project.download,
+          href: withBase(project.download.href),
+        }
+      : undefined,
   }
 }
 
