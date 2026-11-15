@@ -1,54 +1,68 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { Sun, Moon, Menu, X, Calendar } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react'
+import { ArrowUpRight, Grid2X2, Home, Layers3, Wrench, X } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
+import SwitchButton from './kokonutui/switch-button'
 import Button from './Button'
 import ContactSheet from './ContactSheet'
+import BottomNavBar from './ui/bottom-nav-bar'
 import { currentPathname, withBase } from '../lib/paths'
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#about' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Other', href: '#other' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', short: 'Home', href: '#about', icon: Home },
+  { label: 'Projects', short: 'Work', href: '#projects', icon: Layers3 },
+  { label: 'Skills', short: 'Skills', href: '#skills', icon: Wrench },
+  { label: 'Other', short: 'Explore', href: '#other', icon: Grid2X2 },
+  { label: 'Contact', short: 'Contact', href: '#contact', icon: ArrowUpRight },
 ]
 
 const SECTION_IDS = ['about', 'projects', 'skills', 'other', 'contact']
+const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number]
 
 export default function Nav() {
   const { theme, toggle } = useTheme()
   const pathname = currentPathname()
   const isProjectsPage = pathname === '/projects'
   const isOtherPage = pathname === '/achievements' || pathname === '/guestbook' || pathname === '/blog'
-  const [active, setActive] = useState(
-    isProjectsPage ? 'projects' : isOtherPage ? 'other' : 'about',
-  )
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [active, setActive] = useState(isProjectsPage ? 'projects' : isOtherPage ? 'other' : 'about')
   const [contactSheetOpen, setContactSheetOpen] = useState(false)
+  const [railExpanded, setRailExpanded] = useState(false)
+  const reduceMotion = useReducedMotion()
+  const scrollAnimation = useRef<{ stop: () => void } | null>(null)
+
+  const scrollToPosition = (top: number) => {
+    scrollAnimation.current?.stop()
+    if (reduceMotion) {
+      window.scrollTo({ top, behavior: 'auto' })
+      return
+    }
+
+    scrollAnimation.current = animate(window.scrollY, top, {
+      duration: 1.05,
+      ease: EASE,
+      onUpdate: (value) => window.scrollTo({ top: value, behavior: 'instant' as ScrollBehavior }),
+    })
+  }
+
+  const scrollToTop = () => scrollToPosition(0)
 
   useEffect(() => {
     if (isProjectsPage) {
       setActive('projects')
       return
     }
-
     if (isOtherPage) {
       setActive('other')
       return
     }
 
     const updateActive = () => {
-      const scrollMarker = window.innerHeight * 0.28
+      const marker = window.innerHeight * 0.32
       let current = 'about'
-
       for (const id of SECTION_IDS) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top <= scrollMarker) current = id
+        const section = document.getElementById(id)
+        if (section && section.getBoundingClientRect().top <= marker) current = id
       }
-
       setActive(current)
     }
 
@@ -56,7 +70,6 @@ export default function Nav() {
     window.addEventListener('scroll', updateActive, { passive: true })
     window.addEventListener('resize', updateActive)
     window.addEventListener('hashchange', updateActive)
-
     return () => {
       window.removeEventListener('scroll', updateActive)
       window.removeEventListener('resize', updateActive)
@@ -65,206 +78,106 @@ export default function Nav() {
   }, [isOtherPage, isProjectsPage])
 
   const handleLink = (href: string) => {
-    setMobileOpen(false)
+    setRailExpanded(false)
+    const section = href.slice(1)
 
     if (isProjectsPage || isOtherPage) {
-      if (href === '#projects') {
+      if (section === 'projects' && isProjectsPage) {
         setActive('projects')
-        if (isProjectsPage) {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        } else {
-          window.location.href = withBase('/#projects')
-        }
-        return
-      }
-
-      if (href === '#other') {
+        scrollToTop()
+      } else if (section === 'other' && isOtherPage) {
         setActive('other')
-        if (isOtherPage) {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        } else {
-          window.location.href = withBase('/#other')
-        }
-        return
+        scrollToTop()
+      } else if (section === 'projects') {
+        window.location.href = withBase('/#projects')
+      } else if (section === 'other') {
+        window.location.href = withBase('/#other')
+      } else {
+        window.location.href = withBase(`/${href}`)
       }
-
-      window.location.href = withBase(`/${href}`)
       return
     }
 
-    setActive(href.slice(1))
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    setActive(section)
+    const target = document.querySelector<HTMLElement>(href)
+    if (target) scrollToPosition(target.getBoundingClientRect().top + window.scrollY - 24)
   }
+
+  const railCompact = !railExpanded
 
   return (
     <>
-      <div className="fixed left-0 right-0 top-2 z-50 px-3 pb-2 pt-3" style={{ background: 'transparent' }}>
-        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <div />
-          <div className="flex justify-center">
-            <motion.nav
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-              className="pointer-events-auto"
+      <motion.nav
+        className={`folio-rail ${railCompact ? 'is-compact' : ''}`}
+        aria-label="Portfolio sections"
+        animate={{ width: 56, height: railCompact ? 56 : 360, borderRadius: 28 }}
+        transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 340, damping: 32 }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {railCompact ? (
+            <motion.button
+              key="compact"
+              type="button"
+              className="folio-rail__orb"
+              onClick={() => setRailExpanded(true)}
+              aria-label="Open navigation"
+              aria-expanded={false}
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0, scale: 0.75 }}
+              transition={{ duration: reduceMotion ? 0 : 0.18 }}
             >
-              <div
-                className="flex h-[3.85rem] items-center gap-1.5 border px-2.5 sm:px-3"
-                style={{
-                  borderRadius: '9999px',
-                  background: 'var(--nav-bg)',
-                  boxShadow: '0 18px 42px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.2)',
-                  borderColor: 'color-mix(in srgb, var(--border) 82%, transparent)',
-                }}
-              >
-                <ul className="relative hidden items-center gap-1 md:flex">
-                  {NAV_LINKS.map((link) => {
-                    const isActive = active === link.href.slice(1)
-                    return (
-                      <li key={link.href} className="relative">
-                        {isActive && (
-                          <motion.span
-                            layoutId="nav-pill"
-                            className="absolute inset-0"
-                            style={{
-                              borderRadius: '9999px',
-                              background: 'var(--accent)',
-                              boxShadow: '0 0 16px 2px rgba(255,255,255,0.22)',
-                            }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                          />
-                        )}
-                        <button
-                          onClick={() => handleLink(link.href)}
-                          className={`relative z-10 px-3.5 py-3 text-[14px] font-semibold transition-colors duration-200 lg:px-4 ${
-                            isActive ? '' : 'text-ink-2 hover:text-ink'
-                          }`}
-                          style={{ borderRadius: '9999px', color: isActive ? '#000' : undefined }}
-                        >
-                          {link.label}
-                        </button>
-                      </li>
-                    )
-                  })}
-                </ul>
-
-                <span className="mx-1.5 hidden h-6 w-px bg-border/80 md:block" />
-
-                <button
-                  onClick={toggle}
-                  aria-label="Toggle theme"
-                  className="flex h-10 w-10 items-center justify-center text-ink-3 transition-all duration-200 hover:bg-border/60 hover:text-ink"
-                  style={{ borderRadius: '9999px' }}
-                >
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={theme}
-                      initial={{ rotate: -30, opacity: 0, scale: 0.8 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: 30, opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-                    </motion.span>
-                  </AnimatePresence>
-                </button>
-
-                <button
-                  onClick={() => setMobileOpen(!mobileOpen)}
-                  aria-label="Toggle menu"
-                  className="ml-0.5 flex h-10 w-10 items-center justify-center text-ink-3 transition-all duration-200 hover:bg-border/60 hover:text-ink md:hidden"
-                  style={{ borderRadius: '9999px' }}
-                >
-                  {mobileOpen ? <X size={16} /> : <Menu size={16} />}
+              <Layers3 size={20} aria-hidden="true" />
+              <span className="folio-rail__orb-pulse" aria-hidden="true" />
+            </motion.button>
+          ) : (
+            <motion.div key="expanded" className="folio-rail__content" initial={reduceMotion ? false : { opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={reduceMotion ? undefined : { opacity: 0, scale: 0.8 }} transition={{ duration: reduceMotion ? 0 : 0.2 }}>
+              <div className="folio-rail__head">
+                <button type="button" onClick={() => setRailExpanded(false)} aria-label="Collapse navigation">
+                  <X size={19} aria-hidden="true" />
                 </button>
               </div>
-            </motion.nav>
-          </div>
+              <ul className="folio-rail__links">
+                {NAV_LINKS.map((link, index) => {
+                  const Icon = link.icon
+                  const isActive = active === link.href.slice(1)
+                  return (
+                    <motion.li key={link.href} initial={reduceMotion ? false : { opacity: 0, y: -12, scale: 0.72 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8, scale: 0.72 }} transition={{ duration: reduceMotion ? 0 : 0.22, delay: reduceMotion ? 0 : index * 0.035 }}>
+                      <button type="button" onClick={() => handleLink(link.href)} aria-label={`Go to ${link.label}`} aria-current={isActive ? 'location' : undefined} className={`folio-rail__link ${isActive ? 'is-active' : ''}`}>
+                        {isActive && <motion.span layoutId="folio-rail-active" className="folio-rail__active" transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 390, damping: 36 }} />}
+                        <Icon size={20} aria-hidden="true" />
+                      </button>
+                    </motion.li>
+                  )
+                })}
+              </ul>
+              <div className="folio-rail__foot">
+                <SwitchButton className="folio-rail__theme" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} theme={theme} onThemeChange={(nextTheme) => { if (nextTheme !== theme) toggle() }} showLabel={false} size="sm" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
-          <div className="hidden justify-end lg:flex">
-            <Button
-              onClick={() => setContactSheetOpen(true)}
-              variant="outline"
-              className="h-12 shrink-0 px-5 text-[13px] font-semibold shadow-[0_16px_36px_rgba(0,0,0,0.18)] backdrop-blur-xl"
-              style={{
-                background: 'var(--nav-bg)',
-                borderColor: 'var(--border)',
-                color: 'var(--ink)',
-              }}
-            >
-              <Calendar size={12} />
-              Book a Call
-            </Button>
-          </div>
-        </div>
+      <div className="folio-contact">
+        <span className="folio-contact__note">Have a good one in mind?</span>
+        <Button onClick={() => setContactSheetOpen(true)} variant="outline" className="folio-contact__button">
+          <span>Let’s talk</span><ArrowUpRight size={14} />
+        </Button>
       </div>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-bg/80 backdrop-blur-sm md:hidden"
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -12, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.97 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-              className="fixed left-4 right-4 top-20 z-50 overflow-hidden rounded-2xl border border-border/60 md:hidden"
-              style={{
-                background: 'var(--nav-bg)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                boxShadow: 'var(--nav-shadow)',
-              }}
-            >
-              <ul className="p-2">
-                {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <button
-                      onClick={() => handleLink(link.href)}
-                      className={`w-full rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors duration-150 ${
-                        active === link.href.slice(1)
-                          ? 'text-ink'
-                          : 'text-ink-2 hover:bg-border/40 hover:text-ink'
-                      }`}
-                      style={
-                        active === link.href.slice(1)
-                          ? {
-                              background: 'var(--accent)',
-                              boxShadow: '0 0 16px 2px rgba(255,255,255,0.22)',
-                              color: '#000',
-                            }
-                          : undefined
-                      }
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
-                <li className="px-1 pt-1">
-                  <Button
-                    onClick={() => {
-                      setMobileOpen(false)
-                      setContactSheetOpen(true)
-                    }}
-                    variant="outline"
-                    className="w-full justify-center text-xs"
-                  >
-                    <Calendar size={12} />
-                    Book a Call
-                  </Button>
-                </li>
-              </ul>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <div className="folio-mobile-head">
+        <SwitchButton
+          className="folio-index__theme"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          theme={theme}
+          onThemeChange={(nextTheme) => { if (nextTheme !== theme) toggle() }}
+          showLabel={false}
+          size="sm"
+        />
+      </div>
+
+      <BottomNavBar items={NAV_LINKS} activeHref={`#${active}`} onNavigate={handleLink} onContact={() => setContactSheetOpen(true)} reducedMotion={!!reduceMotion} />
 
       <ContactSheet open={contactSheetOpen} onClose={() => setContactSheetOpen(false)} />
     </>

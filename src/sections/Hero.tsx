@@ -61,13 +61,6 @@ export default function Hero() {
       {/* ── Main hero content ── */}
       <div className="relative flex flex-col justify-center px-8 sm:px-12 max-w-4xl pt-28 pb-20 flex-1 overflow-hidden">
 
-        {/* Accent glow */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full opacity-[0.07]"
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)' }}
-        />
-
         <motion.div variants={stagger} initial="hidden" animate="show" className="relative z-10">
 
           {/* Name */}

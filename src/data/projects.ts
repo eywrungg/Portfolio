@@ -98,7 +98,7 @@ const archiveOnlyProjects: Project[] = [
   {
     index: '05',
     label: 'Frontend',
-    title: 'Frontend Enhancement Project',
+    title: 'Torii Website',
     description:
       'A fork-based frontend enhancement exercise focused on updating layout polish, UI quality, and implementation details on the web.',
     highlights: [

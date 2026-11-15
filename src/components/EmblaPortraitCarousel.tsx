@@ -199,7 +199,7 @@ export default function EmblaPortraitCarousel({
                       const el = e.currentTarget
                       el.style.display = 'none'
                       const parent = el.parentElement as HTMLElement | null
-                      if (parent) parent.style.background = 'linear-gradient(135deg, #1a1a2e, #0d0d1a)'
+                      if (parent) parent.style.background = '#12121f'
                     }}
                   />
                   {s.label && <div className="embla-portrait__label">{s.label}</div>}

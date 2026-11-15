@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useInView } from 'motion/react'
 import Section from '../components/Section'
 import { BrandIcon } from '../lib/brandIcons'
+
+const KoiPond = lazy(() => import('../components/KoiPond'))
 
 const groups = [
   {
@@ -79,14 +82,33 @@ const experience = [
 
 function SkillMark({ item }: { item: { label: string; mark: string; color: string; bg?: string } }) {
   return (
-    <span className="flex h-10 min-w-10 items-center justify-center px-1">
-      <BrandIcon label={item.label} size={21} />
+    <span data-fish-icon="" className="flex h-10 min-w-10 items-center justify-center px-1">
+      <span data-fish-icon-motion="" className="inline-flex"><BrandIcon label={item.label} size={21} /></span>
     </span>
+  )
+}
+
+function PlayfulSkill({ item }: { item: { label: string; mark: string; color: string } }) {
+  return (
+    <button
+      type="button"
+      data-fish-food={item.label}
+      data-fish-obstacle=""
+      className="fish-food relative flex items-center gap-3 rounded-md text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+      aria-label={`Let the koi investigate ${item.label}`}
+      onClick={(event) => event.currentTarget.dispatchEvent(new CustomEvent('koi-feed', { bubbles: true, detail: item.label }))}
+    >
+      <SkillMark item={item} />
+      <span className="font-mono text-xs uppercase tracking-[0.08em]" style={{ color: 'var(--ink-2)' }}>{item.label}</span>
+    </button>
   )
 }
 
 export default function Skills() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const pondRef = useRef<HTMLDivElement>(null)
+  const pondVisible = useInView(sectionRef, { margin: '120px' })
+  const pondReady = useInView(sectionRef, { margin: '120px', once: true })
   const [activeExperience, setActiveExperience] = useState(0)
 
   useEffect(() => {
@@ -111,10 +133,13 @@ export default function Skills() {
   }, [])
 
   return (
-    <Section id="skills" className="mx-auto max-w-6xl px-6 py-28">
-      <div ref={sectionRef} className="grid gap-12 lg:grid-cols-[1fr_22rem] lg:items-start">
+    <Section id="skills" className="relative isolate mx-auto max-w-6xl overflow-x-clip px-6 py-28">
+      <div ref={pondRef} aria-hidden="true" className="pointer-events-none absolute -inset-x-3 inset-y-0 z-0 overflow-hidden sm:-inset-x-10">
+        {pondReady && <Suspense fallback={null}><KoiPond hostRef={pondRef} active={pondVisible} /></Suspense>}
+      </div>
+      <div ref={sectionRef} className="relative z-10 grid gap-12 lg:grid-cols-[1fr_22rem] lg:items-start">
         <div>
-          <div className="mb-14">
+          <div data-fish-obstacle="" className="mb-14">
             <p
               className="font-mono text-sm font-semibold uppercase tracking-[0.18em]"
               style={{ color: 'var(--accent)' }}
@@ -133,13 +158,14 @@ export default function Skills() {
           </div>
 
           <div>
-            {groups.map((group, index) => (
+            {groups.map((group) => (
               <div
                 key={group.title}
                 className="border-t py-9 first:border-t-0 first:pt-0"
                 style={{ borderColor: 'rgba(255,255,255,0.08)' }}
               >
                 <h3
+                  data-fish-obstacle=""
                   className="text-3xl uppercase leading-none tracking-normal sm:text-4xl"
                   style={{
                     color: 'var(--accent)',
@@ -151,15 +177,7 @@ export default function Skills() {
 
                 <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-5">
                   {group.items.map((item) => (
-                    <div key={item.label} className="flex items-center gap-3">
-                      <SkillMark item={item} />
-                      <span
-                        className="font-mono text-xs uppercase tracking-[0.08em]"
-                        style={{ color: index === 0 ? 'var(--ink-2)' : 'var(--ink-3)' }}
-                      >
-                        {item.label}
-                      </span>
-                    </div>
+                    <PlayfulSkill key={item.label} item={item} />
                   ))}
                 </div>
               </div>
@@ -167,6 +185,7 @@ export default function Skills() {
 
             <div className="border-t py-9" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
               <h3
+                data-fish-obstacle=""
                 className="text-3xl uppercase leading-none tracking-normal sm:text-4xl"
                 style={{
                   color: 'var(--accent)',
@@ -178,15 +197,7 @@ export default function Skills() {
 
               <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-5">
                 {creativeTools.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <SkillMark item={item} />
-                    <span
-                      className="font-mono text-xs uppercase tracking-[0.08em]"
-                      style={{ color: 'var(--ink-3)' }}
-                    >
-                      {item.label}
-                    </span>
-                  </div>
+                  <PlayfulSkill key={item.label} item={item} />
                 ))}
               </div>
             </div>
@@ -194,24 +205,14 @@ export default function Skills() {
         </div>
 
         <aside
+          data-fish-obstacle=""
           className="relative overflow-hidden border px-5 py-6 lg:sticky lg:top-24"
           style={{
-            background:
-              'linear-gradient(180deg, color-mix(in srgb, var(--card) 90%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent))',
+            background: 'var(--card)',
             borderColor: 'color-mix(in srgb, var(--accent) 14%, var(--border))',
             boxShadow: '0 24px 60px color-mix(in srgb, black 16%, transparent)',
           }}
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-28"
-            style={{
-              background:
-                'radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 56%), linear-gradient(90deg, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px)',
-              backgroundSize: 'auto, 28px 28px',
-              opacity: 0.7,
-            }}
-          />
           <h3
             className="relative text-2xl font-black tracking-normal"
             style={{ color: 'var(--ink)', fontFamily: '"Archivo Black", "Space Grotesk", sans-serif' }}

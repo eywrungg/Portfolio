@@ -71,7 +71,7 @@ function AppDownloadModal({
             aria-labelledby="gabay-download-title"
             className="relative z-10 max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-[1.65rem] border sm:rounded-[2rem]"
             style={{
-              background: 'linear-gradient(145deg, color-mix(in srgb, var(--card) 92%, #0a617d 8%), var(--card))',
+              background: 'var(--card)',
               borderColor: 'color-mix(in srgb, #7dd3fc 45%, var(--border))',
               boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
             }}
@@ -88,7 +88,7 @@ function AppDownloadModal({
                 <div
                   aria-hidden
                   className="absolute inset-0"
-                  style={{ background: 'radial-gradient(circle at 52% 22%, rgba(125,211,252,0.38), transparent 48%)' }}
+                  style={{ background: 'rgba(125,211,252,0.08)' }}
                 />
                 <div className="relative flex h-full flex-col justify-between">
                   <div className="inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em]" style={{ borderColor: 'rgba(125,211,252,0.4)', color: '#b8f2ff', background: 'rgba(7,90,120,0.35)' }}>

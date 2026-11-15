@@ -35,7 +35,7 @@ export default function AchievementsPage() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_0.95fr]">
             <div className="min-h-[28rem] border-b lg:border-b-0 lg:border-r" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-              <img src={hero.image} alt={hero.title} className="h-full w-full object-cover" />
+              <img src={hero.certificateImage ? withBase(hero.certificateImage) : hero.image} alt={hero.title} className={`h-full w-full ${hero.certificateImage ? 'object-contain' : 'object-cover'}`} />
             </div>
             <div className="flex flex-col justify-between p-7 sm:p-9">
               <div>
@@ -53,6 +53,7 @@ export default function AchievementsPage() {
                 <p className="font-mono text-sm uppercase tracking-[0.16em]" style={{ color: 'var(--ink-4)' }}>
                   {hero.meta}
                 </p>
+                {hero.certificateUrl && <a href={withBase(hero.certificateUrl)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Open e-certificate <ArrowUpRight size={16} /><span className="sr-only">(opens in a new tab)</span></a>}
               </div>
             </div>
           </div>
@@ -70,7 +71,7 @@ export default function AchievementsPage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-[1.05fr_0.95fr]">
               <div className="min-h-[15rem] sm:min-h-[18rem]">
-                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                <img src={item.certificateImage ? withBase(item.certificateImage) : item.image} alt={item.title} loading="lazy" className={`h-full w-full ${item.certificateImage ? 'object-contain' : 'object-cover'}`} />
               </div>
               <div className="p-6">
                 <p className="font-mono text-xs uppercase tracking-[0.16em]" style={{ color: item.accent }}>
@@ -85,6 +86,7 @@ export default function AchievementsPage() {
                 <div className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em]" style={{ color: 'var(--ink-3)' }}>
                   {item.meta} <ArrowUpRight size={12} />
                 </div>
+                {item.certificateUrl && <a href={withBase(item.certificateUrl)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Open e-certificate <ArrowUpRight size={16} /><span className="sr-only">(opens in a new tab)</span></a>}
               </div>
             </div>
           </article>

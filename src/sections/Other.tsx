@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import {
   ArrowUpRight,
   BookOpenText,
@@ -8,6 +9,8 @@ import {
   PenTool,
 } from 'lucide-react'
 import Section from '../components/Section'
+import GithubActivityTerrain from '../components/kokonutui/github-activity-terrain'
+import Achievements from './Achievements'
 import { withBase } from '../lib/paths'
 
 function Card({
@@ -19,10 +22,23 @@ function Card({
   className?: string
   style?: React.CSSProperties
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const reduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const parallaxY = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [0, 0, 0] : [28, 0, -28])
+  const parallaxScale = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [1, 1, 1] : [0.96, 1, 0.96])
+
   return (
-    <article
-      className={`rounded-[1.8rem] border ${className}`}
+    <motion.article
+      ref={ref}
+      initial={reduceMotion ? false : { opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`relative h-full overflow-hidden rounded-[1.8rem] border ${className}`}
       style={{
+        y: parallaxY,
+        scale: parallaxScale,
         background: 'var(--card)',
         borderColor: 'var(--border)',
         boxShadow: 'var(--card-shadow)',
@@ -30,7 +46,7 @@ function Card({
       }}
     >
       {children}
-    </article>
+    </motion.article>
   )
 }
 
@@ -70,8 +86,7 @@ function CreativeStack() {
       className="creative-skill-deck relative mt-5 h-44 overflow-hidden rounded-[1.45rem]"
       style={{
         height: 176,
-        background:
-          'radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 38%), linear-gradient(180deg, color-mix(in srgb, var(--ink) 3%, transparent), color-mix(in srgb, var(--ink) 1%, transparent))',
+        background: 'var(--surface)',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
@@ -295,7 +310,9 @@ function SocialTile({
 
 export default function Other() {
   return (
-    <Section id="other" className="mx-auto max-w-5xl px-5 py-20 sm:px-6 sm:py-28">
+    <section id="other" className="overflow-x-clip">
+      <Achievements />
+    <Section className="mx-auto max-w-5xl px-5 pb-20 sm:px-6 sm:pb-28">
       <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
           className="text-3xl font-semibold tracking-tight sm:text-4xl"
@@ -313,70 +330,13 @@ export default function Other() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Card className="group relative overflow-hidden p-5 sm:p-6 lg:col-span-6">
-          <a href={withBase('/achievements')} className="relative block">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute right-[-2.5rem] top-[-3rem] h-40 w-40 rounded-full transition-transform duration-500 group-hover:scale-110"
-              style={{
-                background: 'radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 68%)',
-              }}
-            />
-            <div className="relative">
-              <div
-                className="rounded-[1.45rem] border px-5 py-6 text-center transition-transform duration-300 group-hover:-translate-y-1"
-                style={{
-                  background:
-                    'linear-gradient(180deg, color-mix(in srgb, var(--accent) 8%, transparent), color-mix(in srgb, var(--accent) 2%, transparent) 36%, var(--surface))',
-                  borderColor: 'color-mix(in srgb, var(--accent) 24%, transparent)',
-                  boxShadow: '0 0 28px color-mix(in srgb, var(--accent) 8%, transparent)',
-                }}
-              >
-                <p
-                  className="font-mono text-[11px] uppercase tracking-[0.18em]"
-                  style={{ color: 'var(--accent)' }}
-                >
-                  Milestones and victories
-                </p>
-                <h4
-                  className="mt-4 text-[clamp(1.75rem,4vw,3rem)] font-semibold leading-[0.95] tracking-tight"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  View My <span style={{ color: 'var(--accent)' }}>Achievements</span>
-                </h4>
-                <p
-                  className="mx-auto mt-3 max-w-md text-[0.98rem] leading-relaxed"
-                  style={{ color: 'var(--ink-2)' }}
-                >
-                  A dedicated page for the wins, experiments, and hard-earned progress behind the portfolio.
-                </p>
-              </div>
-
-              <div
-                className="mt-4 inline-flex items-center gap-2 font-medium transition-transform duration-300 group-hover:translate-x-1"
-                style={{ color: 'var(--ink)' }}
-              >
-                Open achievements <ArrowUpRight size={14} />
-              </div>
-            </div>
-          </a>
-        </Card>
-
-        <Card className="group relative overflow-hidden p-5 sm:p-6 lg:col-span-6">
+        <Card className="group relative overflow-hidden p-5 sm:p-6 lg:col-span-12">
           <a href={withBase('/guestbook')} className="block">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'radial-gradient(circle at 50% 10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%), linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 45%)',
-              }}
-            />
             <div className="relative">
               <div
                 className="rounded-[1.45rem] border px-5 py-6 text-center transition-transform duration-300 group-hover:-translate-y-1"
                 style={{
-                  background: 'linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), var(--surface))',
+                  background: 'var(--surface)',
                   borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)',
                   boxShadow: '0 0 28px color-mix(in srgb, var(--accent) 10%, transparent)',
                 }}
@@ -411,14 +371,24 @@ export default function Other() {
           </a>
         </Card>
 
+        <Card className="relative overflow-hidden p-5 sm:p-6 lg:col-span-12">
+          <div className="relative grid gap-6 lg:grid-cols-[0.65fr_1fr] lg:items-center">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: 'var(--accent)' }}>
+                Interactive canvas study
+              </p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight" style={{ color: 'var(--ink)' }}>
+                Activity, lifted into terrain
+              </h3>
+              <p className="mt-2 max-w-sm text-sm leading-relaxed" style={{ color: 'var(--ink-3)' }}>
+                Your public GitHub contributions over the past year, mapped as a draggable 3D heatmap. Hover or focus a day to inspect it, then switch between flat and terrain views.
+              </p>
+            </div>
+            <GithubActivityTerrain />
+          </div>
+        </Card>
+
         <Card className="relative overflow-hidden p-5 sm:p-6 lg:col-span-7">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-[-4rem] top-[-4rem] h-48 w-48 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, color-mix(in srgb, var(--accent) 12%, transparent), transparent 68%)',
-            }}
-          />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h3
@@ -475,5 +445,6 @@ export default function Other() {
         </Card>
       </div>
     </Section>
+    </section>
   )
 }

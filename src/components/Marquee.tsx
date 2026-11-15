@@ -15,16 +15,6 @@ export default function Marquee() {
 
   return (
     <div className="relative w-full overflow-hidden py-6 select-none" aria-hidden>
-      {/* Edge fades */}
-      <div
-        className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10"
-        style={{ background: 'linear-gradient(to right, var(--bg), transparent)' }}
-      />
-      <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10"
-        style={{ background: 'linear-gradient(to left, var(--bg), transparent)' }}
-      />
-
       {/* Track */}
       <div
         ref={trackRef}

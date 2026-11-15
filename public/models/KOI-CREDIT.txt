@@ -1,0 +1,4 @@
+Koi base model by Polyfork
+Source: https://polyfork.dev/asset/koi-base
+Asset: https://polyfork.dev/cdn/koi-base.glb
+License: Commercial use is permitted; attribution is not required according to the source page.

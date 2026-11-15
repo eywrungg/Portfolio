@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import ProjectsArchive from './pages/ProjectsArchive'
 import AchievementsPage from './pages/AchievementsPage'
 import GuestbookPage from './pages/GuestbookPage'
+import { Boxes } from './components/ui/background-boxes'
 import { currentPathname } from './lib/paths'
 
 const Projects = lazy(() => import('./sections/Projects'))
@@ -29,25 +30,9 @@ export default function App() {
         className="noise interactive-bg min-h-screen pt-12 sm:pt-14"
         style={{
           backgroundColor: 'var(--bg)',
-          backgroundImage: 'var(--app-bg)',
-          backgroundSize: 'var(--app-bg-size)',
-          backgroundPosition: 'var(--app-bg-position)',
-          ['--mx' as string]: '50vw',
-          ['--my' as string]: '50vh',
-        }}
-        onMouseMove={(e) => {
-          const el = e.currentTarget
-          el.style.setProperty('--mx', `${e.clientX}px`)
-          el.style.setProperty('--my', `${e.clientY}px`)
         }}
       >
-        <div
-          aria-hidden
-          className="dark-glow pointer-events-none fixed inset-0 z-0"
-          style={{
-            background: 'none',
-          }}
-        />
+        <Boxes />
 
         {isProjectsPage ? (
           <ProjectsArchive />
@@ -77,7 +62,7 @@ export default function App() {
           </main>
         )}
 
-        <Footer />
+        {isProjectsPage || isAchievementsPage || isGuestbookPage || isBlogPage ? <Footer /> : null}
       </div>
     </>
   )

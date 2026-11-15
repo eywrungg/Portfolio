@@ -208,8 +208,7 @@ export default function GuestbookPage() {
         <div
           className="rounded-[2rem] border px-6 py-9 sm:px-8"
           style={{
-            background:
-              'linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent), rgba(255,255,255,0.02) 38%, var(--card))',
+            background: 'var(--card)',
             borderColor: 'color-mix(in srgb, var(--accent) 38%, transparent)',
             boxShadow: '0 0 56px color-mix(in srgb, var(--accent) 14%, transparent), var(--card-shadow)',
           }}

@@ -67,8 +67,7 @@ export default function ContactSheet({
             aria-label="Close get in touch dialog"
             className="absolute inset-0"
             style={{
-              background:
-                'radial-gradient(circle at 50% 20%, rgba(251,146,60,0.08), transparent 34%), rgba(6,6,10,0.72)',
+              background: 'rgba(6,6,10,0.72)',
               backdropFilter: 'blur(12px)',
             }}
             onClick={onClose}
@@ -81,8 +80,7 @@ export default function ContactSheet({
           <motion.div
             className="relative z-10 w-full max-w-[40rem] overflow-hidden rounded-t-[2rem] border px-5 pb-5 pt-4 sm:rounded-[2rem] sm:px-7 sm:pb-6 sm:pt-5"
             style={{
-              background:
-                'linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, white 8%), var(--card))',
+              background: 'var(--card)',
               borderColor: 'var(--border)',
               boxShadow:
                 '0 28px 80px rgba(0,0,0,0.46), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.03)',

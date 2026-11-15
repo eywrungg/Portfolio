@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
-import { motion, useInView } from 'motion/react'
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import Button from '../components/Button'
 import EmblaPortraitCarousel from '../components/EmblaPortraitCarousel'
+import CradleText from '../components/kokonutui/cradle-text'
 import { BrandIcon } from '../lib/brandIcons'
 import { withBase } from '../lib/paths'
 
@@ -81,6 +82,7 @@ function Card({
   style: styleProp,
   onHoverKey,
   hoverKey,
+  parallax = true,
 }: {
   children: React.ReactNode
   className?: string
@@ -89,49 +91,44 @@ function Card({
   style?: React.CSSProperties
   onHoverKey?: (k: number | null) => void
   hoverKey?: number
+  parallax?: boolean
 }) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-50px' })
+  const reduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const parallaxY = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [0, 0, 0] : [10, 0, -10])
+  const parallaxScale = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [1, 1, 1] : [0.99, 1, 0.99])
 
   return (
-    <motion.div
+    <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 18 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, ease: EASE, delay }}
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: reduceMotion ? 0 : 0.55, ease: EASE, delay }}
       className={`relative overflow-hidden rounded-2xl border p-6 ${className}`}
       style={{
+        y: parallax ? parallaxY : 0,
+        scale: parallax ? parallaxScale : 1,
         background: 'var(--card)',
         borderColor: 'var(--border)',
         boxShadow: glow
           ? 'var(--card-shadow), 0 0 48px -14px var(--accent-dim)'
           : 'var(--card-shadow)',
-        transition: 'border-color 0.25s ease, transform 0.2s ease',
+        transition: 'border-color 0.25s ease',
         ...styleProp,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'var(--ink-4)'
-        e.currentTarget.style.transform = 'translateY(-4px)'
         onHoverKey?.(hoverKey ?? null)
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = 'var(--border)'
-        e.currentTarget.style.transform = 'translateY(0)'
         onHoverKey?.(null)
       }}
     >
-      {glow && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)',
-            opacity: 0.12,
-          }}
-        />
-      )}
       {children}
-    </motion.div>
+    </motion.article>
   )
 }
 
@@ -321,7 +318,7 @@ function AccentRule() {
     <span
       aria-hidden
       className="mb-4 block h-[2px] w-10 rounded-full"
-      style={{ background: 'linear-gradient(90deg, var(--accent), transparent)' }}
+      style={{ background: 'var(--accent)' }}
     />
   )
 }
@@ -357,8 +354,6 @@ function TechMarquee() {
 
   return (
     <div className="relative overflow-hidden py-1">
-      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-8" style={{ background: 'linear-gradient(to right, var(--card), transparent)' }} />
-      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-8" style={{ background: 'linear-gradient(to left, var(--card), transparent)' }} />
       <div
         ref={trackRef}
         className="flex w-max items-center gap-2"
@@ -384,10 +379,15 @@ function TechMarquee() {
 export default function About() {
   const [hoverKey, setHoverKey] = useState<number | null>(null)
   const activeImg = hoverKey !== null ? (IMAGES[hoverKey] ?? DEFAULT) : DEFAULT
+  const centerRef = useRef<HTMLDivElement>(null)
+  const reduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: centerRef, offset: ['start end', 'end start'] })
+  const centerY = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [0, 0, 0] : [10, 0, -10])
+  const centerScale = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [1, 1, 1] : [0.99, 1, 0.99])
 
   return (
-    <section id="about" className="mx-auto max-w-5xl px-5 pb-10 pt-16">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-12">
+    <section id="about" className="about-koi-theme isolate mx-auto max-w-5xl px-5 pb-10 pt-16">
+      <div className="relative z-10 grid grid-cols-2 gap-2 lg:grid-cols-12">
         <Card
           className="order-1 col-span-1 flex min-h-[115px] flex-col items-center justify-center text-center lg:col-span-4 lg:order-1"
           delay={0}
@@ -417,24 +417,24 @@ export default function About() {
               Alcebar
             </span>
           </h2>
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--ink-4)' }}>
-            Fullstack Developer
-          </p>
+          <CradleText text="Fullstack Developer" className="developer-cradle mt-3" />
         </Card>
 
-        <div
+        <motion.div
+          ref={centerRef}
           className="contents lg:order-4 lg:col-span-4 lg:flex lg:flex-col lg:gap-3 lg:self-stretch"
-          style={{ minHeight: 0 }}
+          style={{ minHeight: 0, y: centerY, scale: centerScale }}
         >
           <Card
-            className="order-2 col-span-1 h-[208px] overflow-hidden p-0 sm:h-[244px] lg:order-none lg:h-[322px] lg:w-full"
+            className="order-2 col-span-1 h-[208px] overflow-hidden p-0 sm:h-[244px] lg:order-none lg:h-auto lg:min-h-[322px] lg:w-full lg:flex-1"
             style={{ padding: 0 }}
             delay={0.14}
+            parallax={false}
           >
-            <div className="relative h-full w-full">
-              <div className="absolute inset-0 z-0" style={{ background: 'linear-gradient(135deg, #263238, #0b0f16)' }} />
+            <div className="relative h-full w-full overflow-hidden">
+              <div className="absolute inset-0 z-0" style={{ background: '#172026' }} />
               {CENTER_IMAGE_LAYERS.map((image) => (
-                <img
+                <motion.img
                   key={image.id}
                   src={withBase(image.src)}
                   alt=""
@@ -444,7 +444,7 @@ export default function About() {
                     transition: 'opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease',
                     pointerEvents: 'none',
                     objectPosition: image.objectPosition ?? 'center center',
-                    transform: `scale(${image.scale ?? 1})`,
+                    scale: (image.scale ?? 1) * 1.28,
                     filter: image.filter ?? 'none',
                   }}
                   onError={(e) => {
@@ -456,8 +456,9 @@ export default function About() {
           </Card>
 
           <Card
-            className="order-5 col-span-1 flex flex-col justify-between self-start overflow-hidden lg:order-none lg:min-h-[112px] lg:self-stretch"
+            className="order-5 col-span-1 flex min-h-[112px] flex-col justify-between self-start overflow-hidden lg:order-none lg:min-h-[112px] lg:flex-none lg:self-stretch"
             delay={0.16}
+            parallax={false}
             style={{ padding: 0 }}
             hoverKey={5}
             onHoverKey={setHoverKey}
@@ -466,11 +467,10 @@ export default function About() {
               <div
                 className="absolute inset-0"
                 style={{
-                  background:
-                    'radial-gradient(circle at 50% 12%, rgba(255,255,255,0.18), transparent 42%), linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                  background: 'rgba(255,255,255,0.03)',
                 }}
               />
-              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.18 }}>
+              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none" style={{ opacity: 0.18 }}>
                 <defs>
                   <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
                     <path d="M 28 0 L 0 0 0 28" fill="none" stroke="var(--ink)" strokeWidth="0.5" />
@@ -492,14 +492,15 @@ export default function About() {
                   top: 0,
                   bottom: 0,
                   width: 2,
-                  background: 'linear-gradient(to bottom, transparent, var(--accent), transparent)',
+                  background: 'var(--accent)',
                   opacity: 0.55,
+                  pointerEvents: 'none',
                   animation: 'scanline 3s linear infinite',
                   boxShadow: '0 0 8px 2px var(--accent-dim)',
                 }}
               />
             </div>
-            <div className="relative z-10 flex h-full flex-col justify-end px-4 pb-3 pt-3 sm:px-5">
+            <div className="pointer-events-none relative z-10 flex h-full flex-col justify-end px-4 pb-3 pt-3 sm:px-5">
               <h4
                 className="font-semibold uppercase leading-none tracking-tight"
                 style={{ color: 'var(--ink)', fontSize: 'clamp(1rem, 1.9vw, 1.45rem)' }}
@@ -514,7 +515,7 @@ export default function About() {
               </p>
             </div>
           </Card>
-        </div>
+        </motion.div>
 
         <Card
           className="order-3 col-span-2 p-3 sm:px-3 sm:pb-0 sm:pt-2 lg:order-2 lg:col-span-8"
@@ -554,7 +555,7 @@ export default function About() {
         </Card>
 
         <Card
-          className="order-6 col-span-1 flex flex-col self-start lg:order-3 lg:col-span-4"
+          className="order-6 col-span-1 flex flex-col self-start lg:order-3 lg:col-span-4 lg:self-stretch"
           delay={0.1}
           hoverKey={6}
           onHoverKey={setHoverKey}
