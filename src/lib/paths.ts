@@ -8,6 +8,7 @@ function isSafeInternalPath(path: string) {
 
 export function withBase(path: string) {
   if (/^(https?:|mailto:|tel:|#)/.test(path)) return path
+  if (path === basePath.slice(0, -1) || path.startsWith(basePath)) return path
 
   const cleanPath = path.startsWith('/') ? path.slice(1) : path
   return `${basePath}${cleanPath}`

@@ -485,7 +485,7 @@ function AllProjectsBento() {
 
   return (
     <div className="projects-archive-bento">
-      <CoverFlow items={previews.map((project) => ({ id: project.index, image: withBase(project.image), title: project.title }))} />
+      <CoverFlow items={previews.map((project) => ({ id: project.index, image: project.image, title: project.title }))} />
     </div>
   )
 }

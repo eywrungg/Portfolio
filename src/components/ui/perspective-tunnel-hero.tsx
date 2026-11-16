@@ -1,7 +1,6 @@
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
 import type { Project } from '../../data/projects'
-import { withBase } from '../../lib/paths'
 
 // Adapted from Daiwiik Harihar's Perspective Tunnel Hero (MIT, 21st.dev).
 export const PROJECT_TUNNEL_DURATION_MS = 2000
@@ -58,7 +57,7 @@ export default function PerspectiveTunnelTransition({ projects }: { projects: Pr
                 }}
                 transition={{ duration: 1.5, delay: index * 0.035, times: [0, 0.22, 0.72, 1], ease: 'easeInOut' }}
               >
-                <img src={withBase(project.image)} alt="" draggable={false} />
+                <img src={project.image} alt="" draggable={false} />
                 <span className="project-tunnel__card-label">
                   <small>{project.index} / {project.label}</small>
                   <strong>{project.title}</strong>
