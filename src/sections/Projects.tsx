@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { ArrowUpRight, ChevronDown, X } from 'lucide-react'
 import { IconFolder, type FolderIcon } from '../components/ui/icon-folder'
 import { AnimatedText } from '../components/ui/animated-text'
+import { CoverFlow } from '../components/ui/cover-flow'
+import PerspectiveTunnelTransition, { PROJECT_TUNNEL_DURATION_MS } from '../components/ui/perspective-tunnel-hero'
 import Section from '../components/Section'
 import { allProjects, projects, type Project } from '../data/projects'
 import { BrandIcon, getBrandAccent } from '../lib/brandIcons'
@@ -363,10 +366,12 @@ function FeaturedProject({
   item,
   companionProjects,
   onReadMore,
+  onViewAll,
 }: {
   item: Project
   companionProjects: Project[]
   onReadMore: (project: Project) => void
+  onViewAll: (event: ReactMouseEvent<HTMLAnchorElement>) => void
 }) {
   const articleRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
@@ -462,7 +467,7 @@ function FeaturedProject({
                 showPill={false}
               />
             </div>
-            <a href={withBase('/projects')} className="featured-project__mini featured-project__mini--archive">
+            <a href={withBase('/projects')} onClick={onViewAll} className="featured-project__mini featured-project__mini--archive">
               <span>Project archive</span>
               <strong>View all projects</strong>
               <ArrowUpRight className="absolute right-3 top-3 text-accent" size={20} aria-hidden="true" />
@@ -479,40 +484,41 @@ function AllProjectsBento() {
   const previews = allProjects.filter((project) => project.index !== '07')
 
   return (
-    <a
-      href={withBase('/projects')}
-      className="projects-archive-bento"
-      aria-label={`Explore all ${allProjects.length} projects`}
-    >
-      <div className="projects-archive-bento__copy">
-        <h3>Every build,<br />part of the story<span>.</span></h3>
-      </div>
-      <div className="projects-archive-bento__gallery" aria-hidden="true">
-        <div className="projects-archive-bento__track">
-          {[0, 1].map((copy) => (
-            <div className="projects-archive-bento__run" key={copy}>
-              {previews.map((project) => (
-                <div className="projects-archive-bento__tile" key={`${copy}-${project.index}`}>
-                  <img src={project.image} alt="" loading="lazy" />
-                  <span>{project.index} / {project.title}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="projects-archive-bento__footer">
-        <span className="projects-archive-bento__cta">Explore all {allProjects.length} projects <ArrowUpRight size={16} /></span>
-      </div>
-    </a>
+    <div className="projects-archive-bento">
+      <CoverFlow items={previews.map((project) => ({ id: project.index, image: withBase(project.image), title: project.title }))} />
+    </div>
   )
 }
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [openingArchive, setOpeningArchive] = useState(false)
+  const reduceMotion = useReducedMotion()
   const featured = allProjects.find((project) => project.index === '05')
   const companionProjects = allProjects.filter((project) => ['01', '03', '04'].includes(project.index))
   const remainingProjects = projects.filter((project) => !['01', '02', '03', '04'].includes(project.index))
+
+  const onViewAll = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || reduceMotion) return
+    event.preventDefault()
+    setOpeningArchive(true)
+  }
+
+  useEffect(() => {
+    if (!openingArchive) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const timer = window.setTimeout(() => window.location.assign(withBase('/projects')), PROJECT_TUNNEL_DURATION_MS)
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpeningArchive(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [openingArchive])
 
   return (
     <>
@@ -524,7 +530,11 @@ export default function Projects() {
           </div>
         </div>
 
-        {featured && <FeaturedProject item={featured} companionProjects={companionProjects} onReadMore={setSelectedProject} />}
+        <div className="pb-16 sm:pb-20">
+          <AllProjectsBento />
+        </div>
+
+        {featured && <FeaturedProject item={featured} companionProjects={companionProjects} onReadMore={setSelectedProject} onViewAll={onViewAll} />}
 
         <div className="grid grid-cols-1 gap-x-10 gap-y-16 pt-16 lg:grid-cols-2 lg:pt-24">
           {remainingProjects.map((item) => (
@@ -532,12 +542,10 @@ export default function Projects() {
           ))}
         </div>
 
-        <div className="pt-16 sm:pt-20">
-          <AllProjectsBento />
-        </div>
       </Section>
 
       <ProjectModal item={selectedProject} onClose={() => setSelectedProject(null)} />
+      {openingArchive && <PerspectiveTunnelTransition projects={allProjects} />}
     </>
   )
 }

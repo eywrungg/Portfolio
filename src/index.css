@@ -37,6 +37,118 @@
   --project-image-overlay: rgba(255,255,255,0.04);
 }
 
+/* Full-screen project transition shown before opening the archive. */
+.project-tunnel {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  height: 100svh;
+  background: var(--bg);
+}
+
+.project-tunnel__stage {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg);
+  color: var(--ink);
+  transform-style: preserve-3d;
+}
+
+.project-tunnel__ring {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border));
+  border-radius: 50%;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.project-tunnel__ring--inner { width: 42vmin; height: 42vmin; }
+.project-tunnel__ring--outer { width: 74vmin; height: 74vmin; border-style: dashed; opacity: 0.42; }
+
+.project-tunnel__plane {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.project-tunnel__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.project-tunnel__card img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+.project-tunnel__card-label {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  gap: 2px;
+  padding: 9px 11px;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.project-tunnel__card-label small { color: var(--accent); font-family: monospace; font-size: 9px; text-transform: uppercase; }
+.project-tunnel__card-label strong { overflow: hidden; font-size: 11px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+
+.project-tunnel__title {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6vw;
+  text-align: center;
+  pointer-events: none;
+}
+
+.project-tunnel__title p {
+  margin-bottom: 1.25rem;
+  color: var(--accent);
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+}
+
+.project-tunnel__title h2 {
+  font-family: 'Archivo Black', 'Space Grotesk', sans-serif;
+  font-size: clamp(3.4rem, 8vw, 8rem);
+  line-height: 0.88;
+  letter-spacing: -0.085em;
+}
+
+.project-tunnel__title h2 span { color: var(--accent); }
+.project-tunnel__title > span { display: block; max-width: 34ch; margin: 1.6rem auto 0; color: var(--ink-2); font-size: clamp(0.9rem, 1.5vw, 1.1rem); line-height: 1.5; }
+
+@media (max-width: 767px) {
+  .project-tunnel__title h2 { font-size: clamp(3rem, 13vw, 5.7rem); }
+  .project-tunnel__title > span { max-width: 26ch; }
+  .project-tunnel__card-label { padding: 6px 8px; }
+  .project-tunnel__card-label strong { font-size: 9px; }
+}
+
 @layer components {
   .folio-rail {
     position: fixed;
@@ -972,31 +1084,21 @@
 
   .projects-archive-bento {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
     color: var(--ink);
   }
 
-  .projects-archive-bento:focus-visible { outline: none; }
-  .projects-archive-bento:focus-visible .projects-archive-bento__cta { outline: 2px solid var(--accent); outline-offset: 5px; }
-  .projects-archive-bento__copy { position: relative; z-index: 2; text-align: center; }
-  .projects-archive-bento h3 { margin: 0; color: var(--ink); font-family: 'Archivo Black', 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4.2vw, 3.25rem); letter-spacing: -0.075em; line-height: 0.98; }
-  .projects-archive-bento h3 > span { color: var(--accent); }
-  .projects-archive-bento__gallery { position: relative; width: 100%; height: 202px; overflow: hidden; perspective: 850px; clip-path: polygon(0 0, 10% 5%, 20% 11%, 30% 16%, 40% 19%, 50% 20%, 60% 19%, 70% 16%, 80% 11%, 90% 5%, 100% 0, 100% 100%, 90% 95%, 80% 89%, 70% 84%, 60% 81%, 50% 80%, 40% 81%, 30% 84%, 20% 89%, 10% 95%, 0 100%); }
-  .projects-archive-bento__track { display: flex; width: max-content; height: 100%; animation: projects-archive-stream 48s linear infinite; }
-  .projects-archive-bento__run { display: flex; flex: none; gap: 10px; height: 100%; padding-right: 10px; }
-  .projects-archive-bento__tile { position: relative; flex: none; width: clamp(172px, 19vw, 232px); height: 100%; overflow: hidden; border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); border-radius: 14px; background: var(--surface); transform: perspective(850px) rotateY(-9deg); box-shadow: 0 14px 30px rgba(0,0,0,0.2); }
-  .projects-archive-bento__tile:nth-child(3n + 2) { transform: perspective(850px) rotateY(0deg); }
-  .projects-archive-bento__tile:nth-child(3n) { transform: perspective(850px) rotateY(9deg); }
-  .projects-archive-bento__tile img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
-  .projects-archive-bento__tile::after { position: absolute; right: 0; bottom: 0; left: 0; height: 66px; background: rgba(0,0,0,0.66); content: ''; }
-  .projects-archive-bento__tile span { position: absolute; z-index: 1; right: 10px; bottom: 44px; left: 10px; overflow: hidden; color: #fff; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-  .projects-archive-bento__footer { position: relative; z-index: 2; display: flex; justify-content: flex-end; padding: 0 clamp(1.35rem, 3vw, 2rem); }
-  .projects-archive-bento__cta { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--accent); color: var(--ink); font-size: 12px; font-weight: 700; transition: gap 0.2s ease; }
-  .projects-archive-bento:hover .projects-archive-bento__cta { gap: 13px; }
-  .projects-archive-bento:focus-visible .projects-archive-bento__track { animation-play-state: paused; }
-  @keyframes projects-archive-stream { to { transform: translateX(-50%); } }
+  .cover-flow { position: relative; width: 100%; height: 340px; overflow: hidden; border: 1px solid var(--border); border-radius: 28px; background: var(--card); touch-action: pan-y; }
+  .cover-flow:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .cover-flow__stage { position: relative; width: 100%; height: 340px; overflow: hidden; perspective: 1000px; transform-style: preserve-3d; }
+  .cover-flow__card { position: absolute; top: 26px; left: 50%; width: 272px; height: 198px; margin-left: -136px; padding: 0; border: 0; background: transparent; cursor: pointer; transform-style: preserve-3d; will-change: transform, opacity; }
+  .cover-flow__card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .cover-flow__art { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: 0 16px 32px rgba(0,0,0,.35); }
+  .cover-flow__art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .cover-flow__caption { position: absolute; right: 0; bottom: 0; left: 0; display: grid; padding: 8px 10px; background: var(--card); color: var(--ink); text-align: left; opacity: 0; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; }
+  .cover-flow__card:hover .cover-flow__caption, .cover-flow__card:focus .cover-flow__caption { opacity: 1; transform: translateY(0); }
+  .cover-flow__caption strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+  .cover-flow__reflection { position: absolute; top: calc(100% + 8px); right: 0; left: 0; height: 82px; overflow: hidden; opacity: .15; pointer-events: none; }
+  .cover-flow__reflection img { display: block; width: 100%; height: 198px; object-fit: cover; object-position: top; transform: scaleY(-1); }
 
   @media (min-width: 1200px) {
     .projects-archive-bento { left: 50%; width: min(1540px, calc(100vw - 10rem)); transform: translateX(-50%); }
@@ -1030,8 +1132,11 @@
     .featured-project__mini-grid { grid-template-columns: 1fr; }
     .featured-project__mini--stack { min-height: 200px; padding: 0; }
     .featured-project__mini strong { font-size: 11px; }
-    .projects-archive-bento__gallery { height: 170px; }
-    .projects-archive-bento__footer { justify-content: center; }
+    .cover-flow { height: 280px; border-radius: 20px; }
+    .cover-flow__stage { height: 280px; }
+    .cover-flow__card { top: 26px; width: 188px; height: 140px; margin-left: -94px; }
+    .cover-flow__reflection { height: 60px; }
+    .cover-flow__reflection img { height: 140px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1041,9 +1146,7 @@
     .featured-project__companion > img,
     .featured-project__companion-arrow,
     .projects-archive-bento,
-    .projects-archive-bento__track,
     .project-card-image img { transition: none !important; }
-    .projects-archive-bento__track { animation: none; }
   }
 }
 

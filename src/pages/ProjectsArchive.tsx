@@ -224,6 +224,7 @@ export default function ProjectsArchive() {
                   return (
                     <article
                       key={project.index}
+                      id={`project-${project.index}`}
                       className="rounded-[1.6rem] border p-4 transition-colors sm:p-5"
                       style={{
                         background: 'var(--card)',
